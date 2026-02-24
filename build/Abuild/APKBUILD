@@ -1,0 +1,44 @@
+# Contributor: Łukasz Jendrysik <scadu@yandex.com>
+# Maintainer: Natanael Copa <ncopa@alpinelinux.org>
+# QNX Maintainer: Felix Xing <fxing@qnx.com>
+pkgname=libxfce4ui
+pkgver=4.21.2
+pkgrel=0
+pkgdesc="Widgets library for the Xfce desktop environment"
+url="https://xfce.org/"
+arch="all"
+license="GPL-2.0-only"
+subpackages="$pkgname-dev $pkgname-lang"
+depends_dev="libxfce4util-dev xfconf-dev"
+depends="gtk3 libintl libxfce4util xfconf"
+makedepends="
+    $depends_dev
+    meson
+    gettext
+    gettext-dev
+    gobject-introspection-dev
+    gtk3-dev
+    libepoxy-dev
+    "
+source="https://archive.xfce.org/src/xfce/libxfce4ui/${pkgver%.*}/libxfce4ui-$pkgver.tar.xz
+        "
+
+build() {
+    meson setup build \
+        --prefix=/usr \
+        -Db_lto=false \
+        -Dvendor-info="QNX OSG Reference Weton Desktop"
+    meson compile -C build
+}
+
+check() {
+    meson test --print-errorlogs -C build
+}
+
+package() {
+    DESTDIR="$pkgdir" meson install --no-rebuild -C build
+}
+
+sha512sums="
+624974fdfc57d6941b0e15f0a4c6ce153fdc3260bd60c05bc436dd9d9428930f9eccb1ce6d1748af89b73769c7c91ae8f8a5c77713c5db17d03a2da66afc4db8  libxfce4ui-4.21.2.tar.xz
+"
